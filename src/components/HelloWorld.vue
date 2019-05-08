@@ -109,6 +109,8 @@
         &__box {
           border: solid 1px;
           height: 150px;
+          text-align: center;
+          color: #000;
           transition: background-color 1s ease-in-out;
         }
       }
