@@ -3,13 +3,13 @@
     <div class="picklizr__title" v-html="'PICKLIZR'"></div>
     <div class="picklizr__grid">
       <div class="grid__box arrow-top-left"></div>
-      <div class="grid__box top" v-html="people[4].name"></div>
+      <div class="grid__box top" v-html="people[3].name" :style="{backgroundColor: people[3].color}"></div>
       <div class="grid__box arrow-top-right"></div>
-      <div class="grid__box left" v-html="people[1].name"></div>
-      <div class="grid__box center" v-html="people[0].name"></div>
-      <div class="grid__box right" v-html="people[3].name"></div>
+      <div class="grid__box left" v-html="people[0].name" :style="{backgroundColor: people[0].color}"></div>
+      <div class="grid__box center" v-html="nick.name" :style="{backgroundColor: nick.color}"></div>
+      <div class="grid__box right" v-html="people[2].name" :style="{backgroundColor: people[2].color}"></div>
       <div class="grid__box arrow-bottom-left"></div>
-      <div class="grid__box bottom" v-html="people[2].name"></div>
+      <div class="grid__box bottom" v-html="people[1].name" :style="{backgroundColor: people[1].color}"></div>
       <div class="grid__box arrow-bottom-right"></div>
     </div>
     <div class="button__container">
@@ -28,50 +28,66 @@
     },
     data () {
       return {
+        nick: {
+          name: 'Nick',
+          color: 'red'
+        },
         people: [
           {
             id: 0,
-            name: 'Nick',
-            isEditing: 1
+            name: 'Linda',
+            isEditing: 2,
+            color: 'green'
           },
           {
             id: 1,
-            name: 'Linda',
-            isEditing: 2
+            name: 'Josh',
+            isEditing: 3,
+            color: 'blue'
           },
           {
             id: 2,
-            name: 'Josh',
-            isEditing: 3
+            name: 'Eric',
+            isEditing: 4,
+            color: 'yellow'
           },
           {
             id: 3,
-            name: 'Eric',
-            isEditing: 4
-          },
-          {
-            id: 4,
             name: 'Id',
-            isEditing: 1
+            isEditing: 1,
+            color: 'purple'
           }
         ]
       }
     },
     methods: {
       picklize () {
-        console.log('Ni')
-        this.people = this.people.map(person => ({
-          id: person.id,
-          name: person.name,
-          isEditing: this.getRandomInt(1, 5)
-        }))
-          .slice(1, 5)
-          .sort((a, b) => a.isEditing === b.id)
+        let array = [0, 1, 2, 3]
+        let shuffleArray = this.shuffle(array)
+
+        let organizedPeople = this.people.map((person, index) => {
+          while (person.isEditing === shuffleArray[index] || person.id === shuffleArray[index]) {
+            shuffleArray = this.shuffle(shuffleArray)
+          }
+          person.isEditing = shuffleArray[index]
+          return person
+        }).sort((a, b) => a.isEditing - b.isEditing)
+
+        this.people = organizedPeople
       },
-      getRandomInt (min, max) {
-        min = Math.ceil(min)
-        max = Math.floor(max)
-        return Math.floor(Math.random() * (max - min)) + min
+      shuffle (array) {
+        let currentIndex = array.length
+        let tempValue, randomIndex
+
+        while (currentIndex !== 0) {
+          randomIndex = Math.floor(Math.random() * currentIndex)
+          currentIndex--
+
+          tempValue = array[currentIndex]
+          array[currentIndex] = array[randomIndex]
+          array[randomIndex] = tempValue
+        }
+        return array
       }
     }
   }
@@ -84,6 +100,7 @@
       text-align: center;
       font-size: 20px;
     }
+
     &__grid {
       display: grid;
       grid-template: "arrow-top-left top arrow-top-right" "left center right" "arrow-bottom-left bottom arrow-bottom-right";
@@ -92,6 +109,7 @@
         &__box {
           border: solid 1px;
           height: 150px;
+          transition: background-color 1s ease-in-out;
         }
       }
 
